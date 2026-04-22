@@ -2,10 +2,519 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>UI task</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Transport Quote Form</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg-top: #f3f7f5;
+        --bg-bottom: #dde8e3;
+        --card: rgba(255, 255, 255, 0.96);
+        --border: #d6dfda;
+        --text: #1b2b24;
+        --muted: #687971;
+        --step-active-bg: #143d2a;
+        --step-active-text: #ffffff;
+        --step-idle-bg: #eef3f0;
+        --step-idle-text: #557062;
+        --field-bg: #ffffff;
+        --button: #2e8b57;
+        --button-hover: #237147;
+        --shadow: 0 18px 50px rgba(28, 48, 38, 0.14);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        color: var(--text);
+        background:
+          radial-gradient(circle at top left, rgba(46, 139, 87, 0.18), transparent 28%),
+          linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
+      }
+
+      .app-shell {
+        width: min(100%, 460px);
+      }
+
+      .quote-card {
+        background: var(--card);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        border-radius: 24px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        backdrop-filter: blur(10px);
+      }
+
+      .card-header {
+        padding: 22px 22px 18px;
+        border-bottom: 1px solid rgba(214, 223, 218, 0.8);
+      }
+
+      .eyebrow {
+        margin: 0 0 16px;
+        font-size: 0.74rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .step-bar {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .step-button {
+        appearance: none;
+        border: 0;
+        border-radius: 16px;
+        padding: 14px 16px;
+        text-align: left;
+        background: var(--step-idle-bg);
+        color: var(--step-idle-text);
+        cursor: pointer;
+        transition: transform 160ms ease, background-color 160ms ease, color 160ms ease;
+      }
+
+      .step-button:disabled {
+        cursor: not-allowed;
+        opacity: 0.6;
+      }
+
+      .step-button:not(:disabled):hover,
+      .step-button:not(:disabled):focus-visible {
+        transform: translateY(-1px);
+      }
+
+      .step-button.active {
+        background: var(--step-active-bg);
+        color: var(--step-active-text);
+      }
+
+      .step-index,
+      .step-label {
+        display: block;
+      }
+
+      .step-index {
+        margin-bottom: 4px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .step-label {
+        font-size: 1rem;
+        font-weight: 700;
+      }
+
+      .card-body {
+        padding: 22px;
+      }
+
+      .section-title {
+        margin: 0 0 18px;
+        font-size: 1.28rem;
+        line-height: 1.35;
+      }
+
+      .muted-copy {
+        margin: 0 0 18px;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
+      .field-stack {
+        display: grid;
+        gap: 0;
+        margin-bottom: 18px;
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        overflow: hidden;
+        background: rgba(250, 252, 251, 0.98);
+      }
+
+      .field-row {
+        display: grid;
+        grid-template-columns: 24px 1fr;
+        gap: 12px;
+        align-items: center;
+        padding: 0 16px;
+        min-height: 66px;
+      }
+
+      .field-row + .field-row {
+        border-top: 1px solid var(--border);
+      }
+
+      .field-icon {
+        width: 20px;
+        height: 20px;
+        color: #567666;
+      }
+
+      .field-input,
+      .field-select {
+        width: 100%;
+        border: 0;
+        background: transparent;
+        color: var(--text);
+        font: inherit;
+        padding: 21px 0;
+        outline: none;
+      }
+
+      .field-grid {
+        display: grid;
+        gap: 14px;
+        margin-bottom: 18px;
+      }
+
+      .field-card {
+        padding: 14px 16px;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        background: var(--field-bg);
+      }
+
+      .field-label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 0.82rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .field-select {
+        padding: 8px 0 2px;
+      }
+
+      .field-select:disabled {
+        color: #96a59e;
+      }
+
+      .primary-button {
+        width: 100%;
+        border: 0;
+        border-radius: 16px;
+        padding: 16px 20px;
+        font: inherit;
+        font-weight: 800;
+        letter-spacing: 0.03em;
+        color: #ffffff;
+        background: var(--button);
+        cursor: pointer;
+        transition: background-color 160ms ease, transform 160ms ease;
+      }
+
+      .primary-button:hover,
+      .primary-button:focus-visible {
+        background: var(--button-hover);
+        transform: translateY(-1px);
+      }
+
+      .assistive {
+        margin-top: 14px;
+        min-height: 20px;
+        font-size: 0.92rem;
+        color: #9a3d3d;
+      }
+
+      @media (max-width: 520px) {
+        body {
+          padding: 16px;
+        }
+
+        .card-header,
+        .card-body {
+          padding: 18px;
+        }
+
+        .section-title {
+          font-size: 1.12rem;
+        }
+      }
+    </style>
   </head>
   <body>
-    <h1>Hello, UI task</h1>
-    <button>Click me</button>
+    <main class="app-shell">
+      <section class="quote-card" aria-label="Transport quote form">
+        <div class="card-header">
+          <p class="eyebrow">Get a shipping estimate</p>
+          <div class="step-bar" role="tablist" aria-label="Quote steps">
+            <button
+              class="step-button active"
+              id="step-tab-1"
+              type="button"
+              role="tab"
+              aria-selected="true"
+              aria-controls="step-panel-1"
+              data-step-target="1"
+            >
+              <span class="step-index">Step 1</span>
+              <span class="step-label">Destination</span>
+            </button>
+            <button
+              class="step-button"
+              id="step-tab-2"
+              type="button"
+              role="tab"
+              aria-selected="false"
+              aria-controls="step-panel-2"
+              data-step-target="2"
+              disabled
+            >
+              <span class="step-index">Step 2</span>
+              <span class="step-label">Vehicle</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <section id="step-panel-1" role="tabpanel" aria-labelledby="step-tab-1">
+            <h1 class="section-title">Transport car pickup and destination.</h1>
+            <p class="muted-copy">Enter a city or ZIP code for both stops to continue.</p>
+            <div class="field-stack">
+              <label class="field-row">
+                <svg class="field-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path
+                    fill="currentColor"
+                    d="M10 4a6 6 0 1 0 3.87 10.58l4.28 4.27 1.42-1.42-4.27-4.28A6 6 0 0 0 10 4Zm0 2a4 4 0 1 1 0 8a4 4 0 0 1 0-8Z"
+                  />
+                </svg>
+                <input
+                  class="field-input"
+                  id="pickup"
+                  name="pickup"
+                  type="text"
+                  autocomplete="shipping address-level2"
+                  placeholder="Pickup"
+                  aria-label="Pickup"
+                />
+              </label>
+              <label class="field-row">
+                <svg class="field-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path
+                    fill="currentColor"
+                    d="M6 3h8.5L18 6.5V21l-5-2-5 2V3Zm2 2v12.76l5-2 3 1.2V7.33L13.67 5H8Z"
+                  />
+                </svg>
+                <input
+                  class="field-input"
+                  id="delivery"
+                  name="delivery"
+                  type="text"
+                  autocomplete="shipping address-level2"
+                  placeholder="Delivery"
+                  aria-label="Delivery"
+                />
+              </label>
+            </div>
+            <button class="primary-button" id="vehicle-details-button" type="button">
+              VEHICLE DETAILS
+            </button>
+            <p class="assistive" id="step-1-error" aria-live="polite"></p>
+          </section>
+
+          <section
+            id="step-panel-2"
+            role="tabpanel"
+            aria-labelledby="step-tab-2"
+            hidden
+          >
+            <h2 class="section-title">Vehicle details</h2>
+            <p class="muted-copy">Choose the vehicle information so we can calculate the cost.</p>
+            <div class="field-grid">
+              <label class="field-card">
+                <span class="field-label">Vehicle Year</span>
+                <input
+                  class="field-input"
+                  id="vehicle-year"
+                  name="vehicle-year"
+                  type="text"
+                  placeholder="Type or pick a year"
+                  list="vehicle-year-options"
+                  aria-label="Vehicle Year"
+                />
+                <datalist id="vehicle-year-options"></datalist>
+              </label>
+
+              <label class="field-card">
+                <span class="field-label">Vehicle Make</span>
+                <select class="field-select" id="vehicle-make" name="vehicle-make" aria-label="Vehicle Make">
+                  <option value="">Select make</option>
+                </select>
+              </label>
+
+              <label class="field-card">
+                <span class="field-label">Vehicle Model</span>
+                <select
+                  class="field-select"
+                  id="vehicle-model"
+                  name="vehicle-model"
+                  aria-label="Vehicle Model"
+                  disabled
+                >
+                  <option value="">Select model</option>
+                </select>
+              </label>
+            </div>
+            <button class="primary-button" id="save-button" type="button">
+              SAVE Calculate Cost
+            </button>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const vehicleData = {
+        Toyota: ["Camry", "Corolla", "RAV4", "Tacoma"],
+        Honda: ["Accord", "Civic", "CR-V", "Pilot"],
+        Ford: ["F-150", "Escape", "Explorer", "Mustang"],
+        Chevrolet: ["Silverado", "Equinox", "Tahoe", "Malibu"],
+        Tesla: ["Model 3", "Model Y", "Model S", "Model X"]
+      };
+
+      const state = {
+        currentStep: 1,
+        highestStep: 1
+      };
+
+      const tabs = {
+        1: document.getElementById("step-tab-1"),
+        2: document.getElementById("step-tab-2")
+      };
+
+      const panels = {
+        1: document.getElementById("step-panel-1"),
+        2: document.getElementById("step-panel-2")
+      };
+
+      const pickupInput = document.getElementById("pickup");
+      const deliveryInput = document.getElementById("delivery");
+      const step1Error = document.getElementById("step-1-error");
+      const yearInput = document.getElementById("vehicle-year");
+      const yearOptions = document.getElementById("vehicle-year-options");
+      const makeSelect = document.getElementById("vehicle-make");
+      const modelSelect = document.getElementById("vehicle-model");
+      const vehicleDetailsButton = document.getElementById("vehicle-details-button");
+
+      function populateYears() {
+        const currentYear = new Date().getFullYear();
+        const fragment = document.createDocumentFragment();
+
+        for (let year = currentYear; year >= 1980; year -= 1) {
+          const option = document.createElement("option");
+          option.value = String(year);
+          fragment.appendChild(option);
+        }
+
+        yearOptions.replaceChildren(fragment);
+      }
+
+      function populateMakes() {
+        const makes = Object.keys(vehicleData);
+        makes.forEach((make) => {
+          const option = document.createElement("option");
+          option.value = make;
+          option.textContent = make;
+          makeSelect.appendChild(option);
+        });
+      }
+
+      function populateModels(make) {
+        modelSelect.innerHTML = '<option value="">Select model</option>';
+
+        if (!make || !vehicleData[make]) {
+          modelSelect.disabled = true;
+          return;
+        }
+
+        vehicleData[make].forEach((model) => {
+          const option = document.createElement("option");
+          option.value = model;
+          option.textContent = model;
+          modelSelect.appendChild(option);
+        });
+
+        modelSelect.disabled = false;
+      }
+
+      function renderStep() {
+        Object.entries(tabs).forEach(([step, tab]) => {
+          const numericStep = Number(step);
+          const isCurrent = numericStep === state.currentStep;
+          const isUnlocked = numericStep <= state.highestStep;
+          tab.classList.toggle("active", isCurrent);
+          tab.disabled = !isUnlocked;
+          tab.setAttribute("aria-selected", String(isCurrent));
+          panels[numericStep].hidden = !isCurrent;
+        });
+      }
+
+      function goToStep(step) {
+        if (step > state.highestStep) {
+          return;
+        }
+
+        state.currentStep = step;
+        renderStep();
+      }
+
+      function unlockVehicleStep() {
+        state.highestStep = 2;
+        state.currentStep = 2;
+        step1Error.textContent = "";
+        renderStep();
+      }
+
+      vehicleDetailsButton.addEventListener("click", () => {
+        const pickupValue = pickupInput.value.trim();
+        const deliveryValue = deliveryInput.value.trim();
+
+        if (!pickupValue || !deliveryValue) {
+          step1Error.textContent = "Please enter both pickup and delivery locations.";
+          return;
+        }
+
+        unlockVehicleStep();
+      });
+
+      makeSelect.addEventListener("change", (event) => {
+        populateModels(event.target.value);
+      });
+
+      Object.values(tabs).forEach((tab) => {
+        tab.addEventListener("click", () => {
+          goToStep(Number(tab.dataset.stepTarget));
+        });
+      });
+
+      populateYears();
+      populateMakes();
+      renderStep();
+
+      window.transportQuoteApp = {
+        vehicleData,
+        state,
+        yearRange: {
+          start: new Date().getFullYear(),
+          end: 1980
+        }
+      };
+    </script>
   </body>
 </html>

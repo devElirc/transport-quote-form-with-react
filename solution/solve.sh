@@ -1,16 +1,7 @@
 #!/bin/bash
-# Oracle solution: create the minimal web app at /app for the verifier to serve and test.
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+
 mkdir -p /app
-cat > /app/index.html << 'EOF'
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>UI task</title>
-  </head>
-  <body>
-    <h1>Hello, UI task</h1>
-    <button>Click me</button>
-  </body>
-</html>
-EOF
+cp "$SCRIPT_DIR/index.html" /app/index.html
