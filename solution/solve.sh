@@ -1,9 +1,26 @@
 #!/bin/bash
 set -euo pipefail
 
-REPO_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-SOURCE_HTML="$REPO_DIR/index.html"
 TARGET_HTML="/app/index.html"
+
+find_source_html() {
+  local candidates=(
+    "/workspace/index.html"
+    "/var/www/transport-quote-form-with-react/index.html"
+    "$(cd "$(dirname "$0")/.." && pwd)/index.html"
+  )
+
+  for p in "${candidates[@]}"; do
+    if [ -f "$p" ]; then
+      echo "$p"
+      return 0
+    fi
+  done
+
+  return 1
+}
+
+SOURCE_HTML="$(find_source_html)"
 
 # Stage the reference implementation where the verifier serves the app.
 mkdir -p /app
@@ -33,6 +50,8 @@ grep -Fq "Tacoma" "$TARGET_HTML"
 grep -Fq "populateModels" "$TARGET_HTML"
 
 # Keep the workspace copy aligned with the staged app for easier inspection.
-cp "$TARGET_HTML" /workspace/index.html
+if [ -d /workspace ]; then
+  cp "$TARGET_HTML" /workspace/index.html
+fi
 
 echo "Oracle solution staged successfully at $TARGET_HTML"

@@ -1,13 +1,6 @@
-FROM node:20-bookworm-slim
-
-ENV DEBIAN_FRONTEND=noninteractive
-
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        bash \
-        ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
+FROM mcr.microsoft.com/playwright:v1.49.0-jammy
 
 WORKDIR /workspace
 
-RUN mkdir -p /app /tests /logs/verifier
+# Avoid creating reserved harness directories like /tests or /oracle here.
+RUN mkdir -p /app /logs/verifier

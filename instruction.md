@@ -1,7 +1,5 @@
 Build a transport quote form as a single-page frontend.
 Use the existing static page setup in this repo. Do not scaffold a new React or Vite app. 
-Update index.html directly with any HTML, CSS, and JavaScript needed to satisfy the task.
-Keep the final implementation in the repo's root index.html. The verifier may mirror that file into /app/index.html before running tests.
 
 The quote form on the home page is a small card with 2 steps.
 At the top, show a step bar with Destination and Vehicle. The current step should stand out clearly.

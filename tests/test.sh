@@ -54,10 +54,7 @@ fi
 export DEBIAN_FRONTEND=noninteractive
 PW_DEPS_EXIT=0
 PW_BROWSER_EXIT=0
-log "playwright install-deps chromium"
-npx playwright install-deps chromium || PW_DEPS_EXIT=$?
-log "playwright install chromium"
-npx playwright install chromium || PW_BROWSER_EXIT=$?
+log "playwright browsers are preinstalled in the image"
 
 # Stage the app HTML where Playwright serves from.
 mkdir -p "$APP_DIR"
