@@ -22,15 +22,16 @@ write_reward_if_missing() {
 trap write_reward_if_missing EXIT
 
 find_source_html() {
-  # Common harness locations.
+  # Common harness locations. (Be careful: /workspace/index.html may exist for
+  # reasons unrelated to this task, so we validate content before accepting.)
   local candidates=(
-    "$WORKSPACE_DIR/index.html"
     "/var/www/transport-quote-form-with-react/index.html"
     "/workspace/transport-quote-form-with-react/index.html"
+    "$WORKSPACE_DIR/index.html"
   )
 
   for p in "${candidates[@]}"; do
-    if [ -f "$p" ]; then
+    if [ -f "$p" ] && grep -Fq "<title>Transport Quote Form</title>" "$p"; then
       echo "$p"
       return 0
     fi
