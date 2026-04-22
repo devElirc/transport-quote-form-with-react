@@ -1,19 +1,22 @@
-Build a transport quote form with react.js.
+Build a transport quote form as a single-page frontend.
+Use the existing static page setup in this repo. Do not scaffold a new React or Vite app. Update index.html directly with any HTML, CSS, and JavaScript needed to satisfy the task.
+
 The quote form on the home page is a small card with 2 steps.
-At the top, show a step bar with Destination, Vehicle. The current step should stand out clearly.
+At the top, show a step bar with Destination and Vehicle. The current step should stand out clearly.
 Users should not be able to open future steps before reaching them.
 Under the step bar, show the content for the current step inside the same card.
 
-Step 1 is for pickup and delivery. The title is "Transport car pickup and destination." 
-Show two stacked fields inside a bordered box. The first field is Pickup with a small search icon. 
-The second field is Delivery with a small flag icon. 
-Under this section, there is a full-width green button labeled "VEHICLE DETAILS". 
+Step 1 is for pickup and delivery. The title is "Transport car pickup and destination."
+Show two stacked fields inside a bordered box. The first field is Pickup with a small search icon.
+The second field is Delivery with a small flag icon.
+Under this section, there is a full-width green button labeled "VEHICLE DETAILS".
 Users can enter a city or ZIP code in both fields, like "Los Angeles" and "Houston".
-And then click the button to moves the Step 2.
+Clicking the button should move to Step 2 only after both fields are filled in. If either field is blank, keep Step 2 locked and show a validation message.
 
 Step 2 is for vehicle details.
-Show fields for Vehicle Year, Vehicle Make, and Vehicle Model. 
-Users can type year or select year from a dropdown.
-The list should start from the current year and go down to 1980. 
-Vehicle Make should load from real vehicle data but now we can use mockdata. Model should stay disabled until a make is selected. After the make is selected, load the model options. Add a "SAVE Calculate Cost" button under the fields.
-
+Show fields for Vehicle Year, Vehicle Make, and Vehicle Model.
+Users can type a year or select one from a dropdown.
+The year list should start from the current year and go down to 1980.
+Vehicle Make can use mocked vehicle data.
+Vehicle Model must stay disabled until a make is selected. After the make is selected, load the model options for that make.
+Add a "SAVE Calculate Cost" button under the fields.

@@ -15,18 +15,18 @@ codebase_size = "minimal"
 # Coding languages used in the oracle solution or required by the agent
 languages = [ "bash", "javascript", "css", "html" ]
 # For tool_specific, api_integration, and db_interaction subcategories, please include specific tool, api framework, or database software
-tags = [ "playwright", "vitest", "multi-step-form", "dependent-dropdown", "form-validation" ]
+tags = [ "playwright", "vitest", "vanilla-javascript", "multi-step-form", "dependent-dropdown", "form-validation" ]
 # Estimated time to complete (minutes)
 expert_time_estimate_min = 45
 junior_time_estimate_min = 90
 
 # Verifier: runs the test script to check task completion
 [verifier]
-timeout_sec = 600.0
+timeout_sec = 300.0
 
 # Agent: limits how long the agent can run when attempting the task
 [agent]
-timeout_sec = 1500.0
+timeout_sec = 1800.0
 
 # Sandbox environment limits
 [environment]
