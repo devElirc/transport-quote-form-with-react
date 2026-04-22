@@ -1,6 +1,12 @@
 FROM mcr.microsoft.com/playwright:v1.49.0-jammy
 
-WORKDIR /workspace
+WORKDIR /app
+
+ENV CI=1 \
+    DEBIAN_FRONTEND=noninteractive \
+    npm_config_audit=false \
+    npm_config_fund=false \
+    npm_config_update_notifier=false
 
 # Avoid creating reserved harness directories like /tests or /oracle here.
 RUN mkdir -p /app /logs/verifier

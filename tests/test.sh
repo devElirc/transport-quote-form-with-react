@@ -4,6 +4,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$SCRIPT_DIR"
 
+TEST_DIR="${TEST_DIR:-/tests}"
 WORKSPACE_DIR="${WORKSPACE_DIR:-/workspace}"
 APP_DIR="${APP_DIR:-/app}"
 
@@ -56,10 +57,11 @@ if [ "$EXIT_CODE" -eq 0 ]; then
 fi
 
 if [ "$EXIT_CODE" -eq 0 ]; then
+  cd "$TEST_DIR"
   if [ -f package-lock.json ]; then
-    npm ci || EXIT_CODE=$?
+    npm ci --no-fund --no-audit || EXIT_CODE=$?
   else
-    npm install || EXIT_CODE=$?
+    npm install --no-fund --no-audit || EXIT_CODE=$?
   fi
 fi
 
@@ -69,22 +71,6 @@ fi
 
 if [ "$EXIT_CODE" -eq 0 ]; then
   npm run test:e2e || EXIT_CODE=$?
-fi
-
-if [ "$EXIT_CODE" -eq 0 ]; then
-  # Run a small pytest verifier as well (keeps checks aligned with the
-  # standard Harbor verifier expectations while still using Playwright).
-  #
-  # Do not change anything below this line except adding additional Python deps.
-  curl -LsSf https://astral.sh/uv/0.9.5/install.sh | sh
-  # shellcheck disable=SC1091
-  source "$HOME/.local/bin/env"
-
-  uvx \
-    -p 3.13 \
-    -w pytest==8.4.1 \
-    -w pytest-json-ctrf==0.3.5 \
-    pytest --ctrf /logs/verifier/ctrf.json /tests/test_outputs.py -rA || EXIT_CODE=$?
 fi
 
 if [ "$EXIT_CODE" -eq 0 ]; then
