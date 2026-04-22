@@ -1,5 +1,5 @@
 #!/bin/bash
-set -uo pipefail
+set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$SCRIPT_DIR"
@@ -40,14 +40,6 @@ find_source_html() {
 
 EXIT_CODE=0
 
-if [ -f package-lock.json ]; then
-  npm ci || EXIT_CODE=$?
-else
-  npm install || EXIT_CODE=$?
-fi
-
-# Stage the app HTML where Playwright serves from.
-mkdir -p "$APP_DIR"
 SOURCE_HTML=""
 if SOURCE_HTML="$(find_source_html)"; then
   :
@@ -56,26 +48,49 @@ else
   echo "Tried: $WORKSPACE_DIR/index.html, /var/www/transport-quote-form-with-react/index.html, /workspace/transport-quote-form-with-react/index.html" >&2
   EXIT_CODE=1
 fi
+
+# Stage the app HTML where Playwright serves from.
 if [ "$EXIT_CODE" -eq 0 ]; then
+  mkdir -p "$APP_DIR"
   cp "$SOURCE_HTML" "$APP_DIR/index.html" || EXIT_CODE=$?
 fi
 
-set +e
-npm run test || EXIT_CODE=$?
+if [ "$EXIT_CODE" -eq 0 ]; then
+  if [ -f package-lock.json ]; then
+    npm ci || EXIT_CODE=$?
+  else
+    npm install || EXIT_CODE=$?
+  fi
+fi
+
+if [ "$EXIT_CODE" -eq 0 ]; then
+  npm run test || EXIT_CODE=$?
+fi
+
 if [ "$EXIT_CODE" -eq 0 ]; then
   npm run test:e2e || EXIT_CODE=$?
 fi
-set -e
 
-# Make the final $? match the test outcome (required by Harbor static checks).
 if [ "$EXIT_CODE" -eq 0 ]; then
-  true
-else
-  false
+  # Run a small pytest verifier as well (keeps checks aligned with the
+  # standard Harbor verifier expectations while still using Playwright).
+  #
+  # Do not change anything below this line except adding additional Python deps.
+  curl -LsSf https://astral.sh/uv/0.9.5/install.sh | sh
+  # shellcheck disable=SC1091
+  source "$HOME/.local/bin/env"
+
+  uvx \
+    -p 3.13 \
+    -w pytest==8.4.1 \
+    -w pytest-json-ctrf==0.3.5 \
+    pytest --ctrf /logs/verifier/ctrf.json /tests/test_outputs.py -rA || EXIT_CODE=$?
 fi
 
-if [ $? -eq 0 ]; then
-  echo 1 > /logs/verifier/reward.txt
+if [ "$EXIT_CODE" -eq 0 ]; then
+  echo 1 > "$REWARD_FILE"
 else
-  echo 0 > /logs/verifier/reward.txt
+  echo 0 > "$REWARD_FILE"
 fi
+
+exit "$EXIT_CODE"
