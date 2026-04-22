@@ -9,13 +9,12 @@ difficulty = "unknown"
 category = "software-engineering"
 # Options for subcategories are: "long_context", "tool_specific", "api_integration", "db_interaction", "ui_building"
 subcategories = [ "ui_building" ]
-number_of_milestones = 0
 # Size of the codebase: minimal -> 0-20 files, small -> 20+ files, large -> 200+ files
-codebase_size = "small"
+codebase_size = "minimal"
 # Coding languages used in the oracle solution or required by the agent
-languages = [ "bash", "html", "css", "javascript" ]
+languages = [ "bash", "html" ]
 # For tool_specific, api_integration, and db_interaction subcategories, please include specific tool, api framework, or database software
-tags = [ "react", "vite", "multi-step-form", "ui-workflow", "playwright" ]
+tags = [ "file-operations",]
 # Estimated time to complete (minutes)
 expert_time_estimate_min = 60
 junior_time_estimate_min = 120
