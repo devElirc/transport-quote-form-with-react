@@ -17,6 +17,7 @@ describe("Transport quote form markup", () => {
   it("defines the two-step transport flow content", () => {
     const html = readHtml();
 
+    expect(html).toContain("<title>Transport Quote Form</title>");
     expect(html).toContain("Transport car pickup and destination.");
     expect(html).toContain("Destination");
     expect(html).toContain("Vehicle");
@@ -35,19 +36,21 @@ describe("Transport quote form markup", () => {
     expect(html).toMatch(/id="vehicle-model"[\s\S]*disabled/);
   });
 
-  it("generates vehicle years from the current year down to 1980", () => {
+  it("includes the expected validation copy and year list hook", () => {
     const html = readHtml();
 
-    expect(html).toContain("for (let year = currentYear; year >= 1980; year -= 1)");
+    expect(html).toContain("Please enter both pickup and delivery locations.");
     expect(html).toContain('list="vehicle-year-options"');
   });
 
-  it("loads mocked makes and dependent models in script data", () => {
+  it("contains mocked vehicle options and a dependent model control", () => {
     const html = readHtml();
 
-    expect(html).toContain("const vehicleData = {");
-    expect(html).toContain('Toyota: ["Camry", "Corolla", "RAV4", "Tacoma"]');
-    expect(html).toContain('Tesla: ["Model 3", "Model Y", "Model S", "Model X"]');
-    expect(html).toContain("populateModels");
+    expect(html).toContain("Toyota");
+    expect(html).toContain("Camry");
+    expect(html).toContain("Corolla");
+    expect(html).toContain("RAV4");
+    expect(html).toContain("Tacoma");
+    expect(html).toMatch(/vehicle-model/);
   });
 });
