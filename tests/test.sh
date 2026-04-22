@@ -9,6 +9,11 @@ APP_DIR="${APP_DIR:-/app}"
 
 mkdir -p /logs/verifier
 REWARD_FILE="/logs/verifier/reward.txt"
+LOG_FILE="/logs/verifier/verifier.log"
+
+# Capture all verifier output for debugging in Harbor.
+# (Harbor doesn't always surface stdout/stderr in the summary UI.)
+exec > >(tee -a "$LOG_FILE") 2>&1
 
 write_reward_if_missing() {
   if [ -f "$REWARD_FILE" ]; then
@@ -65,6 +70,9 @@ else
   echo "Could not find index.html in known locations." >&2
   echo "Tried: $WORKSPACE_DIR/index.html, /var/www/transport-quote-form-with-react/index.html, /workspace/transport-quote-form-with-react/index.html, /app/index.html" >&2
   echo 0 > "$REWARD_FILE"
+  if [ -d "$WORKSPACE_DIR" ]; then
+    cp "$LOG_FILE" "$WORKSPACE_DIR/verifier.log" || true
+  fi
   exit 0
 fi
 cp "$SOURCE_HTML" "$APP_DIR/index.html"
@@ -82,6 +90,10 @@ if [ "$INSTALL_EXIT" -eq 0 ] && [ "$PW_DEPS_EXIT" -eq 0 ] && [ "$PW_BROWSER_EXIT
   echo 1 > "$REWARD_FILE"
 else
   echo 0 > "$REWARD_FILE"
+fi
+
+if [ -d "$WORKSPACE_DIR" ]; then
+  cp "$LOG_FILE" "$WORKSPACE_DIR/verifier.log" || true
 fi
 
 [ "$INSTALL_EXIT" -eq 0 ] && [ "$PW_DEPS_EXIT" -eq 0 ] && [ "$PW_BROWSER_EXIT" -eq 0 ] && [ "$UNIT_EXIT" -eq 0 ] && [ "$E2E_EXIT" -eq 0 ]
