@@ -14,13 +14,13 @@ export DEBIAN_FRONTEND=noninteractive
 npx playwright install-deps chromium
 npx playwright install chromium
 
-# Agents usually edit the task workspace. Mirror that file into /app so the
-# unit-test fallback path and the Playwright web server both validate the same page.
-if [ -f /workspace/index.html ]; then
+# Prefer oracle or agent output already written to /app. If /app is missing,
+# fall back to the task workspace copy and mirror it into /app for Playwright.
+if [ -f /app/index.html ]; then
+  cp /app/index.html /workspace/index.html
+elif [ -f /workspace/index.html ]; then
   mkdir -p /app
   cp /workspace/index.html /app/index.html
-elif [ -f /app/index.html ]; then
-  cp /app/index.html /workspace/index.html
 fi
 
 UNIT_EXIT=0
