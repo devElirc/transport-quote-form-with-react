@@ -5,7 +5,7 @@ import { defineConfig, devices } from "@playwright/test";
  */
 export default defineConfig({
   testDir: "./e2e",
-  fullyParallel: true,
+  fullyParallel: false,
   forbidOnly: true,
   retries: 0,
   workers: 1,
@@ -20,6 +20,6 @@ export default defineConfig({
     command: "npx serve /app -p 3000",
     url: "http://localhost:3000",
     reuseExistingServer: false,
-    timeout: 15_000,
+    timeout: 30_000,
   },
 });

@@ -1,25 +1,49 @@
-Build a transport quote form as a single-page frontend.
-Use the existing static page setup in this repo. Do not scaffold a new React or Vite app. 
+Build a simple transport quote form as one static page using HTML, CSS, and plain JavaScript only.
 
-The quote form on the home page is a small card with 2 steps.
-At the top, show a step bar with Destination and Vehicle. The current step should stand out clearly.
-Users should not be able to open future steps before reaching them.
-Under the step bar, show the content for the current step inside the same card.
+Implement everything in /app/index.html. Do not add a bundler, framework app scaffold, or extra build tooling beyond what you put in that single HTML file.
 
-Step 1 is for pickup and delivery. The title is "Transport car pickup and destination."
-Show two stacked fields inside a bordered box. The first field is Pickup with a small search icon.
-The second field is Delivery with a small flag icon.
-Use accessible labels so the inputs can be found as Pickup and Delivery.
-Under this section, there is a full-width green button labeled "VEHICLE DETAILS".
-Users can enter a city or ZIP code in both fields, like "Los Angeles" and "Houston".
-Clicking the button should move to Step 2 only after both fields are filled in. If either field is blank, keep Step 2 locked and show the validation message "Please enter both pickup and delivery locations."
+Make it a small card with two steps: Destination and Vehicle.
 
-Step 2 is for vehicle details.
-Show fields for Vehicle Year, Vehicle Make, and Vehicle Model.
-Use accessible labels so the controls can be found as Vehicle Year, Vehicle Make, and Vehicle Model.
-Users can type a year or select one from a dropdown.
-The year list should start from the current year and go down to 1980.
-Vehicle Make can use mocked vehicle data.
-Vehicle Model must stay disabled until a make is selected. After the make is selected, load the model options for that make.
-Include mocked makes and models so selecting Toyota enables model choices including Camry, Corolla, RAV4, and Tacoma.
-Add a "SAVE Calculate Cost" button under the fields.
+At the top, add a step bar that behaves like tabs. Use role="tablist" on the wrapper, role="tab" on each step, and mark the active step with aria-selected.
+
+The current step should look active.
+
+Any step the user has not reached yet should stay disabled.
+
+Show the active step content inside the same card.
+
+Use this exact title for Step 1: Transport car pickup and destination.
+
+Inside a bordered box, add two stacked input fields: Pickup with a small search icon, and Delivery with a small flag icon.
+
+On the actual inputs, use aria-label="Pickup" and aria-label="Delivery".
+
+Below the inputs, add a full-width green button labeled exactly VEHICLE DETAILS.
+
+When the user clicks the button, move to Step 2 only if both inputs have text after trimming spaces. If not, stay on Step 1 and show this exact message: Please enter both pickup and delivery locations.
+
+Step 2 should show a heading that includes Vehicle details.
+
+Add a Vehicle Year field with aria-label="Vehicle Year" and list="vehicle-year-options".
+
+Add <datalist id="vehicle-year-options"> and generate years from the current year down to 1980.
+
+The file must contain this exact loop text: for (let year = currentYear; year >= 1980; year -= 1)
+
+Add a Vehicle Make field using a <select> with aria-label="Vehicle Make".
+
+Add a Vehicle Model field using a <select id="vehicle-model"> with aria-label="Vehicle Model".
+
+Keep the model field disabled at first, then enable it and load the matching options after a make is selected.
+
+Create a JavaScript function named populateModels(makeSelect, modelSelect). The file must contain that exact function name as a substring.
+
+Use realistic make and model lists as plain in-page JavaScript data, like a simple object or map.
+
+At minimum, Toyota must include Camry, Corolla, RAV4, and Tacoma.
+
+In the model <select>, make the first option exactly Select model, and keep it selected until the user picks a real model.
+
+Under the fields, add a button with this exact text: SAVE Calculate Cost.
+
+Keep everything frontend-only, with no external API calls.
